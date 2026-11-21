@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ u.display_name }} | EgyFreelancers{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block content %}
+<section class="dashboard-page wrap">
+  <div class="seller-profile big"><div class="seller-avatar" aria-hidden="true">{{ u.display_name[:1]|upper }}</div><div><h1>{{ u.display_name }}</h1><small>Egyptian freelancer · member since {{ u.created_at[:4] }}</small></div></div>
+  {% if u.bio %}<p class="lead bio">{{ u.bio }}</p>{% endif %}
+  <h2 class="sub-h">Portfolio</h2>
+  <div class="work-grid">{% for w in works %}<figure class="work-card">{% if w.image_file %}<img src="{{ url_for('public.media', name=w.image_file) }}" alt="{{ w.title }}" loading="lazy">{% endif %}<figcaption><b>{{ w.title }}</b>{% if w.description %}<small>{{ w.description }}</small>{% endif %}{% if w.link_url %}<a href="{{ w.link_url }}" rel="noopener noreferrer nofollow ugc" target="_blank">View project ↗</a>{% endif %}</figcaption></figure>{% else %}<p class="muted">No work published yet.</p>{% endfor %}</div>
+  <h2 class="sub-h">Services</h2>
+  <div class="gig-grid">{% for g in gigs %}<article class="gig-card"><div class="gig-body"><span class="gig-cat">{{ categories.get(g.category) }}</span><h3><a href="{{ url_for('public.gig_detail', gig_id=g.id) }}">{{ g.title }}</a></h3><div class="gig-footer"><span>Starting at</span><b>{{ '{:,}'.format(g.price) }} <small>EGP</small></b></div></div></article>{% endfor %}</div>
+</section>
+{% endblock %}

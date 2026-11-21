@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Moderation | EgyFreelancers{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block content %}
+<section class="dashboard-page wrap"><span class="eyebrow">Admin</span><h1>Pending gigs</h1>
+{% for g in gigs %}<article class="mod-card"><b>{{ g.title }}</b><small>{{ categories[g.category] }} · {{ '{:,}'.format(g.price) }} EGP · {{ g.seller_name }}</small><p>{{ g.description }}</p>
+<form method="post" action="{{ url_for('admin.decide', gig_id=g.id) }}" class="action-row"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm" name="action" value="approve">Approve</button><button class="btn btn-secondary btn-sm" name="action" value="reject">Reject</button></form></article>
+{% else %}<p class="muted">Nothing waiting.</p>{% endfor %}</section>
+{% endblock %}

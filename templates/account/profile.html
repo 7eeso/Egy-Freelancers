@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Profile | EgyFreelancers{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block content %}
+<section class="dashboard-page wrap">
+  <span class="eyebrow">Your account</span><h1>Profile{% if current_user.role == 'freelancer' %} &amp; portfolio{% endif %}</h1>
+  <div class="panel-grid">
+  <form class="form-card" method="post" action="{{ url_for('account.profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-card-head"><span>About you</span></div>
+    <p class="muted small">Signed in as <b>{{ email }}</b> (only you can see this)</p>
+    <label>Display name<input name="display_name" required maxlength="60" value="{{ current_user.display_name }}"></label>
+    <label>Bio<textarea name="bio" maxlength="600" placeholder="What do you do best?">{{ current_user.bio }}</textarea></label>
+    <button class="btn" type="submit">Save</button>
+  </form>
+  {% if current_user.role == 'freelancer' %}
+  <div class="form-card">
+    <div class="form-card-head"><span>Payment details (encrypted)</span></div>
+    <p class="muted small">Shown only to a client whose order you accepted, for the method they chose. Leave a field empty and save to remove it.</p>
+    {% for key, label in payments.items() %}
+    <form method="post" action="{{ url_for('account.save_payout') }}" class="inline-field">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="method" value="{{ key }}">
+      <label>{{ label }}<input name="details" maxlength="120" value="{{ methods.get(key, '') }}" placeholder="{{ 'Account holder | EG IBAN' if key == 'bank_transfer' else 'Phone or handle' }}" autocomplete="off"></label>
+      <button class="btn btn-secondary btn-sm" type="submit">Save</button>
+    </form>
+    {% endfor %}
+  </div>
+  <div class="form-card wide">
+    <div class="form-card-head"><span>Portfolio</span></div>
+    <form method="post" action="{{ url_for('account.add_portfolio') }}" enctype="multipart/form-data" class="portfolio-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Title<input name="title" required minlength="3" maxlength="100"></label>
+      <label>Description<input name="description" maxlength="500"></label>
+      <label>Link (optional)<input name="link_url" type="url" maxlength="300" placeholder="https://"></label>
+      <label>Image (JPG/PNG/WEBP, max 6 MB)<input name="image" type="file" accept="image/jpeg,image/png,image/webp"></label>
+      <button class="btn" type="submit">Add work</button>
+    </form>
+    <div class="work-grid">{% for w in works %}
+      <figure class="work-card">{% if w.image_file %}<img src="{{ url_for('public.media', name=w.image_file) }}" alt="{{ w.title }}" loading="lazy">{% endif %}
+        <figcaption><b>{{ w.title }}</b>
+        <form method="post" action="{{ url_for('account.delete_portfolio', item_id=w.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="link-btn" type="submit">Remove</button></form></figcaption></figure>
+    {% endfor %}</div>
+  </div>
+  {% endif %}
+  <div class="form-card wide danger-zone">
+    <div class="form-card-head"><span>Your data</span></div>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('account.export_data') }}">Download my data</a>
+    <form method="post" action="{{ url_for('account.delete_account') }}" class="inline-field">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Delete my account: confirm password<input name="password" type="password" required autocomplete="current-password"></label>
+      <button class="btn btn-danger btn-sm" type="submit">Delete account</button>
+    </form>
+  </div>
+  </div>
+</section>
+{% endblock %}

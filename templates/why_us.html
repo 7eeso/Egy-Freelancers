@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Why EgyFreelancers? | EgyFreelancers{% endblock %}
+{% block description %}Why we built EgyFreelancers: fixing banking and payment problems between Egyptian freelancers and global clients, and replacing certificates with real work.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block content %}
+<section class="why-hero wrap">
+  <span class="eyebrow reveal">Why us?</span>
+  <h1 class="reveal">Talent was never the problem.<br><span>Access was.</span></h1>
+  <p class="lead reveal">Egyptian freelancers are among the most capable in the world. But too many of them lose work, lose money, or never get seen, because of banking friction and crowded global marketplaces. We built EgyFreelancers to fix that.</p>
+</section>
+
+<section class="wrap why-grid">
+  <article class="why-card reveal" id="banking">
+    <span class="why-num">01</span>
+    <h2>Getting paid shouldn't be the hardest part of the job.</h2>
+    <p>Global clients pay in dollars. Egyptian freelancers deal with limited card access, withdrawal fees, conversion losses, delayed transfers, and platforms that freeze or hold balances. A great project can still end with a painful week of chasing money.</p>
+    <p><b>Our answer:</b> we don't touch your money at all. Clients pay the freelancer directly, using what already works in Egypt: <b>InstaPay, Fawry, Telda, Vodafone/Orange/e& wallets, or a bank transfer</b>, and Wise or Payoneer for international clients. No platform balance to get stuck, no withdrawal queue, no surprise cut.</p>
+  </article>
+  <article class="why-card reveal" id="competition">
+    <span class="why-num">02</span>
+    <h2>On Upwork and Fiverr, you're one profile in a million.</h2>
+    <p>The big platforms are saturated. A new Egyptian freelancer competes against sellers with 10+ years of history, thousands of reviews, and paid ranking. The newcomer, however talented, rarely gets a first chance.</p>
+    <p><b>Our answer:</b> a focused marketplace where Egyptian talent is the whole point, so you compete with peers, not with the entire planet.</p>
+  </article>
+  <article class="why-card reveal" id="proof">
+    <span class="why-num">03</span>
+    <h2>We don't ask for certificates. We ask for your work.</h2>
+    <p>Ten years of experience on a CV doesn't tell a client if you can design their logo. A portfolio does. On EgyFreelancers you can't publish a gig until you've shown real work: images, links, projects. That's your credential.</p>
+    <p><b>Our answer:</b> portfolio first. Fresh graduates, self-taught developers and career switchers are welcome, if the work is good.</p>
+  </article>
+  <article class="why-card reveal" id="safety">
+    <span class="why-num">04</span>
+    <h2>Your data is yours.</h2>
+    <p>Emails, payment details and order messages are encrypted before they reach the database. Passwords are hashed and can't be read by anyone, including us. Moderators only see gig listings, never personal data. Payment details are shown to a client only after the freelancer accepts that client's order.</p>
+  </article>
+</section>
+
+<section class="wrap section">
+  <div class="how-pay">
+    <h2 class="reveal">How a payment works here</h2>
+    <ol class="pay-steps">
+      <li class="reveal"><b>Client requests</b><small>Picks a service and one of the freelancer's accepted payment methods.</small></li>
+      <li class="reveal"><b>Freelancer accepts</b><small>Only then are payment details revealed to that client.</small></li>
+      <li class="reveal"><b>Client pays directly</b><small>Via InstaPay, Fawry, Telda, wallet or bank, and shares the reference.</small></li>
+      <li class="reveal"><b>Freelancer confirms &amp; delivers</b><small>Work starts once the money has actually arrived.</small></li>
+    </ol>
+    <p class="honest reveal"><b>Be honest with yourself:</b> because we don't hold funds, there's no escrow. We reduce risk by showing portfolios, requiring confirmation before work starts, and suggesting milestone payments for bigger jobs. Never pay in full upfront to someone with no portfolio.</p>
+  </div>
+  <div class="why-cta reveal"><a class="btn" href="{{ url_for('auth.register') }}">Join as a freelancer</a><a class="btn btn-secondary" href="{{ url_for('public.explore') }}">Browse talent</a></div>
+</section>
+{% endblock %}

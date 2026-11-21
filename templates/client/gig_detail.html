@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{% if gig %}{{ gig.title }} | EgyFreelancers{% else %}Service not found | EgyFreelancers{% endif %}{% endblock %}
+{% block content %}
+<section class="wrap detail-page">
+{% if gig %}
+  <a class="back-link" href="{{ url_for('public.explore') }}">← Back to marketplace</a>
+  <div class="detail-layout">
+    <article class="detail-main">
+      <div class="detail-art"><img src="{{ url_for('static', filename='img/cat-' ~ gig.category ~ '.webp') }}" width="640" height="400" alt="{{ categories.get(gig.category, gig.category) }} illustration"></div>
+      <div class="detail-meta"><span class="eyebrow">{{ categories.get(gig.category, gig.category) }}</span>{% if gig.is_demo %}<span class="demo-label">SAMPLE LISTING</span>{% endif %}</div>
+      <h1>{{ gig.title }}</h1>
+      <p class="detail-description">{{ gig.description }}</p>
+      <a class="seller-profile" {% if gig.user_id %}href="{{ url_for('public.public_profile', uid=gig.user_id) }}"{% endif %}><div class="seller-avatar" aria-hidden="true">{{ gig.seller_name[:1]|upper }}</div><div><b>{{ gig.seller_name }}</b><small>Egyptian freelancer · Portfolio-first profile</small></div></a>
+      {% if works %}<div class="detail-section"><h2>Recent work</h2><div class="work-grid">{% for w in works %}{% if w.image_file %}<figure class="work-card"><img src="{{ url_for('public.media', name=w.image_file) }}" alt="{{ w.title }}" loading="lazy"><figcaption><b>{{ w.title }}</b></figcaption></figure>{% endif %}{% endfor %}</div></div>{% endif %}
+      <div class="detail-section"><h2>About this service</h2><p>Discuss your goals, deliverables, timing, and revisions with the freelancer before agreeing to work together.</p></div>
+    </article>
+    <aside class="order-panel" aria-label="Pricing and ordering">
+      <span class="eyebrow">Starting price</span>
+      <h2>{{ "{:,}".format(gig.price) }} <small>EGP</small></h2>
+      <div class="order-divider"></div>
+      <div class="order-row"><span>Pay with</span><b>{% for p in pays %}{{ payments.get(p, p) }}{{ ', ' if not loop.last }}{% endfor %}</b></div>
+      <div class="order-row"><span>Payment</span><b>Direct to freelancer</b></div>
+      {% if gig.is_demo %}<p class="safe-note">Sample listing: it shows how a service looks. Real freelancers are joining now.</p>
+      {% elif not current_user %}<a class="btn btn-block" href="{{ url_for('auth.login', next=request.path) }}">Log in to order</a>
+      {% elif current_user.role == 'client' %}
+      <form method="post" action="{{ url_for('account.create_order', gig_id=gig.id) }}" class="order-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Payment method<select name="payment_method">{% for p in pays %}<option value="{{ p }}">{{ payments.get(p, p) }}</option>{% endfor %}</select></label>
+        <label>Your message<textarea name="message" required minlength="5" maxlength="1000" placeholder="What do you need and by when?"></textarea></label>
+        <button class="btn btn-block" type="submit">Request this service</button>
+      </form>
+      {% else %}<p class="safe-note">Log in with a client account to order.</p>{% endif %}
+      <small class="safe-note">We never hold your money. You pay the freelancer directly after they accept.</small>
+    </aside>
+  </div>
+{% else %}
+  <div class="not-found">
+    <h1>Service not found</h1>
+    <p>This service may have been removed or is not approved.</p>
+    <a class="btn" href="{{ url_for('public.explore') }}">Return to marketplace</a>
+  </div>
+{% endif %}
+</section>
+{% endblock %}

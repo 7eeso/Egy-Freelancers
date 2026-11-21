@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ o.id }} | EgyFreelancers{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block content %}
+<section class="dashboard-page wrap">
+  <a class="back-link" href="{{ url_for('account.dashboard') }}">← Dashboard</a>
+  <span class="eyebrow">Order #{{ o.id }} · with {{ other.display_name }}</span>
+  <h1>{{ o.title }}</h1>
+  <p><span class="pill">{{ labels[o.status] }}</span> <b>{{ '{:,}'.format(o.agreed_price) }} EGP</b> via <b>{{ payments.get(o.payment_method, '-') }}</b></p>
+  {% set steps = ['requested','accepted','paid_by_client','payment_confirmed','delivered','completed'] %}{% set idx = steps.index(o.status) if o.status in steps else -1 %}
+  <ol class="timeline" aria-label="Order progress">
+    {% for s, t in [('requested','Requested'),('accepted','Accepted'),('paid_by_client','Paid'),('payment_confirmed','Confirmed'),('delivered','Delivered'),('completed','Done')] %}<li class="{{ 'done' if loop.index0 <= idx }}">{{ t }}</li>{% endfor %}
+  </ol>
+  {% if pay_details %}
+  <div class="pay-box"><b>Pay the freelancer directly:</b><code>{{ pay_details }}</code><small>Method: {{ payments.get(o.payment_method) }}. Pay only this amount ({{ '{:,}'.format(o.agreed_price) }} EGP). For larger jobs, agree on milestone payments in chat. Then press "I've paid" and add your transfer reference.</small></div>
+  {% endif %}
+  {% if actions %}
+  <div class="action-row">
+    {% for a in actions %}
+    <form method="post" action="{{ url_for('account.order_status', order_id=o.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="{{ a }}">
+      {% if a == 'paid_by_client' %}<input name="reference" maxlength="120" placeholder="Transfer reference / last 4 digits" aria-label="Payment reference">{% endif %}
+      <button class="btn {{ 'btn-secondary' if a in ('declined','cancelled') }} btn-sm" type="submit">{{ {'accepted':'Accept order','declined':'Decline','cancelled':'Cancel order','paid_by_client':"I've paid",'payment_confirmed':'I received the payment','delivered':'Mark as delivered','completed':'Confirm & complete'}[a] }}</button>
+    </form>{% endfor %}
+  </div>{% endif %}
+  <h2 class="sub-h">Messages <small class="muted">(encrypted at rest)</small></h2>
+  <div class="chat">{% for m in msgs %}<div class="bubble {{ 'mine' if m.mine }}"><p>{{ m.body }}</p><small>{{ m.at }}</small></div>{% endfor %}<span id="end"></span></div>
+  {% if o.status not in ('declined','cancelled','completed') %}
+  <form method="post" action="{{ url_for('account.order_message', order_id=o.id) }}" class="chat-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <textarea name="body" required maxlength="1000" placeholder="Write a message…" aria-label="Message"></textarea><button class="btn" type="submit">Send</button>
+  </form>{% endif %}
+  <p class="muted small scam-note">Never share passwords or pay outside the method shown here. EgyFreelancers will never ask you for money or codes in chat.</p>
+</section>
+{% endblock %}

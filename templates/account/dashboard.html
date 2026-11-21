@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | EgyFreelancers{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">{% endblock %}
+{% block content %}
+<section class="dashboard-page wrap">
+  <span class="eyebrow">{{ 'Freelancer' if current_user.role == 'freelancer' else 'Client' if current_user.role == 'client' else 'Admin' }} workspace</span>
+  <h1>Hi {{ current_user.display_name.split(' ')[0] }}.</h1>
+  <div class="dashboard-grid">
+    {% if current_user.role == 'freelancer' %}
+    <a class="dash-card" href="{{ url_for('account.post_gig') }}"><b>Create a gig</b><small>Needs at least one portfolio item</small></a>
+    <a class="dash-card" href="{{ url_for('account.profile') }}"><b>Portfolio &amp; payment details</b><small>Your proof of work</small></a>
+    {% else %}
+    <a class="dash-card" href="{{ url_for('account.post_project') }}"><b>Post a project</b><small>Describe what you need</small></a>
+    <a class="dash-card" href="{{ url_for('public.explore') }}"><b>Find talent</b><small>Browse portfolios</small></a>
+    {% endif %}
+    {% if current_user.role == 'admin' %}<a class="dash-card" href="{{ url_for('admin.queue') }}"><b>Moderation queue</b><small>Approve gigs</small></a>{% endif %}
+  </div>
+  <h2 class="sub-h">Orders</h2>
+  {% if orders %}<ul class="row-list">{% for o in orders %}<li><a href="{{ url_for('account.order_view', order_id=o.id) }}"><b>{{ o.title }}</b><span class="pill">{{ labels[o.status] }}</span><small>{{ '{:,}'.format(o.agreed_price) }} EGP</small></a></li>{% endfor %}</ul>
+  {% else %}<p class="muted">No orders yet.</p>{% endif %}
+  {% if gigs %}<h2 class="sub-h">My gigs</h2><ul class="row-list">{% for g in gigs %}<li><span><b>{{ g.title }}</b></span><span class="pill pill-{{ g.status }}">{{ g.status }}</span></li>{% endfor %}</ul>{% endif %}
+  {% if projects %}<h2 class="sub-h">My projects</h2><ul class="row-list">{% for p in projects %}<li><span><b>{{ p.title }}</b></span><small>{{ '{:,}'.format(p.budget) }} EGP</small></li>{% endfor %}</ul>{% endif %}
+</section>
+{% endblock %}

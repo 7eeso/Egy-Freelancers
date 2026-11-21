@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Join EgyFreelancers{% endblock %}
+{% block content %}
+<section class="auth-shell wrap">
+  <div class="auth-brand reveal">
+    <span class="eyebrow">Join the community</span>
+    <h1>Your next chapter starts here.</h1>
+    <p>Hire Egyptian talent, or get paid for your skills, in the way that works for you. No certificates required.</p>
+    <ul class="trust-list"><li>Passwords are salted, peppered and hashed. We can't read them.</li><li>Your email and payment details are encrypted at rest.</li><li>We never hold your money.</li></ul>
+  </div>
+  <form class="form-card" method="post" action="{{ url_for('auth.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-card-head"><span>Create account</span></div>
+    <label>Display name<input name="display_name" required minlength="2" maxlength="60" autocomplete="name" value="{{ form.get('display_name','') }}" placeholder="Your name"></label>
+    <label>Email<input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com"></label>
+    <div class="form-two">
+      <label>Password<input name="password" type="password" required minlength="10" maxlength="128" autocomplete="new-password" placeholder="10+ characters" data-strength></label>
+      <label>Confirm<input name="password2" type="password" required minlength="10" maxlength="128" autocomplete="new-password" placeholder="Repeat password"></label>
+    </div>
+    <div class="strength" aria-hidden="true"><i></i></div>
+    <label>I'm here to<select name="role"><option value="client" {{ 'selected' if form.get('role')=='client' }}>Hire freelancers</option><option value="freelancer" {{ 'selected' if form.get('role')=='freelancer' }}>Offer my services</option></select></label>
+    <label class="check"><input type="checkbox" name="terms" required> I understand payments happen directly between client and freelancer, outside the platform.</label>
+    <button class="btn" type="submit">Create account</button>
+    {% if error %}<p class="form-message" data-state="error" role="alert">{{ error }}</p>{% endif %}
+    <p>Already a member? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+  </form>
+</section>
+{% endblock %}

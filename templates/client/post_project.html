@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Post a project | EgyFreelancers{% endblock %}
+{% block content %}
+<section class="form-shell wrap">
+  <div class="form-side">
+    <span class="eyebrow">Client workspace</span>
+    <h1>Tell us what you're building.</h1>
+    <p>Share the details, then browse portfolios and request the freelancer who fits.</p>
+    <div class="form-tip"><b>Helpful tip</b><small>Clear goals, deliverables and budget help freelancers give a useful answer. Never put personal contact details or passwords in the description.</small></div>
+  </div>
+  <form class="form-card" method="post" action="{{ url_for('account.post_project') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-card-head"><span>Project details</span></div>
+    <label>Project title<input name="title" required minlength="10" maxlength="120" value="{{ form.get('title','') }}" placeholder="e.g. Design a landing page for my shop"></label>
+    <label>What do you need?<textarea name="description" required minlength="30" maxlength="2000" placeholder="Describe the work, deliverables, and timeline">{{ form.get('description','') }}</textarea></label>
+    <div class="form-two">
+      <label>Category<select name="category">{% for key, label in categories.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select></label>
+      <label>Budget (EGP)<input name="budget" type="number" min="1" max="10000000" required value="{{ form.get('budget','') }}"></label>
+    </div>
+    <button class="btn" type="submit">Save project</button>
+    {% if error %}<p class="form-message" data-state="error" role="alert">{{ error }}</p>{% endif %}
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Post your gig | EgyFreelancers{% endblock %}
+{% block content %}
+<section class="form-shell wrap">
+  <div class="form-side">
+    <span class="eyebrow">Freelancer workspace</span>
+    <h1>Turn your skills into opportunity.</h1>
+    <p>Describe what you offer, and choose how clients can pay you.</p>
+    <div class="form-tip"><b>Portfolio over paperwork</b><small>No certificates needed. Add at least one portfolio item in your <a href="{{ url_for('account.profile') }}">profile</a>, and save payment details for each method you accept.</small></div>
+  </div>
+  <form class="form-card" method="post" action="{{ url_for('account.post_gig') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-card-head"><span>Your service</span></div>
+    <label>Gig title<input name="title" required minlength="10" maxlength="120" value="{{ form.get('title','') }}" placeholder="I will design a modern brand identity"></label>
+    <label>Description<textarea name="description" required minlength="30" maxlength="2000" placeholder="What the client receives, timing, revisions">{{ form.get('description','') }}</textarea></label>
+    <div class="form-two">
+      <label>Category<select name="category">{% for key, label in categories.items() %}<option value="{{ key }}" {{ 'selected' if form.get('category')==key }}>{{ label }}</option>{% endfor %}</select></label>
+      <label>Starting price (EGP)<input name="price" type="number" min="1" max="1000000" required value="{{ form.get('price','') }}"></label>
+    </div>
+    <fieldset class="pay-pick"><legend>Payment methods you accept</legend>
+      {% for key, label in payments.items() %}<label class="check"><input type="checkbox" name="payments" value="{{ key }}" {% if form.getlist is defined and key in form.getlist('payments') %}checked{% endif %}> {{ label }}{% if key not in have %} <small class="muted">(add details first)</small>{% endif %}</label>{% endfor %}
+    </fieldset>
+    <button class="btn" type="submit">Submit for review</button>
+    {% if error %}<p class="form-message" data-state="error" role="alert">{{ error }}</p>{% else %}<p class="form-message">New gigs are reviewed before they appear publicly.</p>{% endif %}
+  </form>
+</section>
+{% endblock %}

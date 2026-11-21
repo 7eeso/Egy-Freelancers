@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Log in | EgyFreelancers{% endblock %}
+{% block content %}
+<section class="auth-shell wrap">
+  <div class="auth-brand reveal">
+    <span class="eyebrow">Welcome back</span>
+    <h1>Good to see you again.</h1>
+    <p>Your orders, messages and portfolio are waiting.</p>
+  </div>
+  <form class="form-card" method="post" action="{{ url_for('auth.login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="next" value="{{ next or '' }}">
+    <div class="form-card-head"><span>Log in</span></div>
+    <label>Email<input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com"></label>
+    <label>Password<input name="password" type="password" required maxlength="200" autocomplete="current-password" placeholder="Your password"></label>
+    <button class="btn" type="submit">Log in</button>
+    {% if error %}<p class="form-message" data-state="error" role="alert">{{ error }}</p>{% endif %}
+    <p>New to EgyFreelancers? <a href="{{ url_for('auth.register') }}">Join the community</a></p>
+  </form>
+</section>
+{% endblock %}
